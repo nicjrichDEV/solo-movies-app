@@ -1,5 +1,6 @@
 import "./styles/global.css";
 import { setupCounter } from "./components/counter";
+import { getTitleData, getTitlePoster, searchForTitle } from "./services/OMDb";
 
 document.querySelector("#app").innerHTML = `
   <div>
@@ -10,3 +11,6 @@ document.querySelector("#app").innerHTML = `
 `;
 
 setupCounter(document.querySelector("#counter"));
+
+console.log(await getTitleData());
+console.log(await searchForTitle());

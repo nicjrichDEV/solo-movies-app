@@ -23,11 +23,11 @@ async function getTitlePoster(IMDbID = "tt1285016") {
 
 async function searchForTitle(title = "The Matrix") {
   const rep = await fetch(
-    `http://www.omdbapi.com/?apikey=${import.meta.env.VITE_OMDB_KEY}&t=${title}`
+    `http://www.omdbapi.com/?apikey=${import.meta.env.VITE_OMDB_KEY}&s=${title}`
   );
   const data = await rep.json();
 
-  return data;
+  return data.Search;
 }
 
 export { getTitleData, getTitlePoster, searchForTitle };

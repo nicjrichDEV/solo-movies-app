@@ -1,16 +1,23 @@
 import "./styles/global.css";
-import { setupCounter } from "./components/counter";
 import { getTitleData, getTitlePoster, searchForTitle } from "./services/OMDb";
+import {
+  addToWatchList,
+  getWatchList,
+  removeItemWatchList,
+  clearWatchList,
+} from "./services/watchList";
+import { searchResults } from "./components/searchResults";
 
 document.querySelector("#app").innerHTML = `
-  <div>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-  </div>
+  <div id="search-results"></div>
 `;
 
-setupCounter(document.querySelector("#counter"));
-
-console.log(await getTitleData());
-console.log(await searchForTitle());
+searchResults(
+  document.querySelector("#search-results"),
+  "Tron",
+  async (item) => {
+    const details = await getTitleData(item.target.dataset.id);
+    addToWatchList(details);
+    console.log(getWatchList());
+  }
+);

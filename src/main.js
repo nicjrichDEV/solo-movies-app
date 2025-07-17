@@ -12,12 +12,19 @@ document.querySelector("#app").innerHTML = `
   <div id="search-results"></div>
 `;
 
-searchResults(
-  document.querySelector("#search-results"),
-  "Tron",
-  async (item) => {
-    const details = await getTitleData(item.target.dataset.id);
-    addToWatchList(details);
-    console.log(getWatchList());
+const searchEl = document.querySelector("#search-results");
+const search = "Tron";
+
+searchResults(searchEl, search, async (item) => {
+  const details = await getTitleData(item.target.dataset.id);
+  addToWatchList(details);
+  console.log(getWatchList());
+});
+
+// TODO: Handle DOM Updates to Search Based off WatchList Status
+async function handleClick(buttonID) {
+  const watchList = getWatchList();
+
+  if (watchList.some((fav) => fav.imdbId === buttonID)) {
   }
-);
+}

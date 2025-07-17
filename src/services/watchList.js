@@ -1,9 +1,15 @@
 function addToWatchList(item) {
-  // TODO: Check if item already exists before adding to watchList array
   const watchList = getWatchList();
-  watchList.push(item);
-  localStorage.setItem("watchList", JSON.stringify(watchList));
+
+  if (!watchList.some((fav) => fav.imdbID === item.imdbID)) {
+    watchList.push(item);
+    localStorage.setItem("watchList", JSON.stringify(watchList));
+  } else {
+    console.log("Item has already been added");
+  }
 }
+
+// TODO: Add function to check if new item is already in watchList
 
 function getWatchList() {
   const stored = localStorage.getItem("watchList");

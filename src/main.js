@@ -7,8 +7,10 @@ import {
 } from "./services/watchList";
 import { searchResults } from "./components/searchResults";
 import { searchField } from "./components/searchField";
+import { router } from "./router";
 
 document.querySelector("#app").innerHTML = `
+  <div id="hero"></div>
   <div id="search-field"></div>
   <div id="search-results"></div>
 `;
@@ -16,7 +18,19 @@ document.querySelector("#app").innerHTML = `
 const searchFieldEl = document.querySelector("#search-field");
 const searchResultsEl = document.querySelector("#search-results");
 
+// Register Routes
+router.addRoute("/", function () {
+  console.log("Home page handler called");
+});
+
+router.addRoute("/watchlist", function () {
+  console.log("Watch list page handler called");
+});
+
+console.log("All routes registered:", router.routes);
+
 function handleSearchField(query) {
+  // TODO: Handle failed or no entry data searches
   const searchString = query.target.value;
   if (searchString === "") alert("Enter at least three character");
   searchResults(searchResultsEl, searchString);

@@ -1,24 +1,23 @@
 import { searchForTitle } from "../services/OMDb";
-import { getWatchList } from "../services/watchList";
+import { checkUnique } from "../services/watchList";
 
-export async function searchResults(element, titleToSearch, cb) {
+export async function searchResults(element, titleToSearch) {
   const results = await searchForTitle(titleToSearch);
-  const watchList = getWatchList();
 
   // TODO: Complete markup
   const markUp = results
     .map((result) => {
-      const alreadyFav = watchList.some((fav) => fav.imdbID === result.imdbID);
+      const isUnique = checkUnique(result.imdbID);
       return `
         <p>${result.Title}</p>
         <img src="${result.Poster}">
         ${
-          alreadyFav
+          isUnique
             ? `
-            <button data-id="${result.imdbID}">Remove From Watch List</button>
+            <button data-id="${result.imdbID}">Add To Watch List</button>
           `
             : `
-            <button data-id="${result.imdbID}">Add To Watch List</button>
+            <button data-id="${result.imdbID}">Remove From Watch List</button>
           `
         }
         
@@ -27,11 +26,4 @@ export async function searchResults(element, titleToSearch, cb) {
     .join("");
 
   element.innerHTML = markUp;
-
-  function handleClick(e) {
-    const button = e.target.dataset.id;
-    if (button) return cb(button);
-  }
-
-  element.addEventListener("click", handleClick);
 }

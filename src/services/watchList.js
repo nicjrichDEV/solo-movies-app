@@ -1,15 +1,13 @@
 function addToWatchList(item) {
   const watchList = getWatchList();
-
-  if (!watchList.some((fav) => fav.imdbID === item.imdbID)) {
-    watchList.push(item);
-    localStorage.setItem("watchList", JSON.stringify(watchList));
-  } else {
-    console.log("Item has already been added");
-  }
+  watchList.push(item);
+  localStorage.setItem("watchList", JSON.stringify(watchList));
 }
 
-// TODO: Add function to check if new item is already in watchList
+function checkUnique(id) {
+  const watchList = getWatchList();
+  return watchList.some((fav) => fav.imdbID === id) ? false : true;
+}
 
 function getWatchList() {
   const stored = localStorage.getItem("watchList");
@@ -27,4 +25,10 @@ function clearWatchList() {
   console.log("Storage Cleared");
 }
 
-export { addToWatchList, getWatchList, removeItemWatchList, clearWatchList };
+export {
+  addToWatchList,
+  getWatchList,
+  checkUnique,
+  removeItemWatchList,
+  clearWatchList,
+};

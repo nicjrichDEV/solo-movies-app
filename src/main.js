@@ -1,30 +1,51 @@
 import "./styles/global.css";
-import { getTitleData, getTitlePoster, searchForTitle } from "./services/OMDb";
+import { getTitleData } from "./services/OMDb";
 import {
   addToWatchList,
-  getWatchList,
   removeItemWatchList,
-  clearWatchList,
+  checkUnique,
 } from "./services/watchList";
 import { searchResults } from "./components/searchResults";
+import { searchField } from "./components/searchField";
 
 document.querySelector("#app").innerHTML = `
+  <div id="search-field"></div>
   <div id="search-results"></div>
 `;
 
-const searchEl = document.querySelector("#search-results");
-const search = "Tron";
+const searchFieldEl = document.querySelector("#search-field");
+const searchResultsEl = document.querySelector("#search-results");
 
-searchResults(searchEl, search, async (item) => {
-  const details = await getTitleData(item.target.dataset.id);
-  addToWatchList(details);
-  console.log(getWatchList());
-});
+function handleSearchField(query) {
+  const searchString = query.target.value;
+  if (searchString === "") alert("Enter at least three character");
+  searchResults(searchResultsEl, searchString);
+}
 
-// TODO: Handle DOM Updates to Search Based off WatchList Status
-async function handleClick(buttonID) {
-  const watchList = getWatchList();
+async function handleClick(item) {
+  const id = item.target.dataset.id;
 
-  if (watchList.some((fav) => fav.imdbId === buttonID)) {
+  if (!id) return;
+
+  const isUnique = checkUnique(id);
+
+  if (!isUnique) {
+    removeItemWatchList(id);
+    const element = document.querySelector(`[data-id=${id}]`);
+    element.innerText = "Add to Watch List";
+    return;
+  } else {
+    const details = await getTitleData(id);
+    addToWatchList(details);
+    const element = document.querySelector(`[data-id=${id}]`);
+    element.innerText = "Remove from Watch List";
+    return;
   }
 }
+
+function init() {
+  searchField(searchFieldEl, handleSearchField);
+  searchResultsEl.addEventListener("click", handleClick);
+}
+
+init();

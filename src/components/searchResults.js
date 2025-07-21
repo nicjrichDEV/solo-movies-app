@@ -1,4 +1,4 @@
-import { searchForTitle } from "../services/OMDb";
+import { getTitleData, searchForTitle } from "../services/OMDb";
 import { checkUnique } from "../services/watchList";
 
 export async function searchResults(element, titleToSearch) {
@@ -8,9 +8,18 @@ export async function searchResults(element, titleToSearch) {
   const markUp = results
     .map((result) => {
       const isUnique = checkUnique(result.imdbID);
+
+      const titleData = getTitleData(result.imdbID);
+      console.log(titleData);
+
       return `
-        <p>${result.Title}</p>
+      <div class="result">
         <img src="${result.Poster}">
+        <div class="details">
+          <div class="details-row-1">
+            <h3>${result.Title}</h3>
+          </div>
+        </div>
         ${
           isUnique
             ? `
@@ -20,7 +29,7 @@ export async function searchResults(element, titleToSearch) {
             <button data-id="${result.imdbID}">Remove From Watch List</button>
           `
         }
-        
+        </div>
       `;
     })
     .join("");

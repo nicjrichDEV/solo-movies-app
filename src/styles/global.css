@@ -25,4 +25,56 @@ body {
   margin: 0;
   background-color: light-dark var(--background);
   height: 100dvh;
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+}
+
+
+.hero-container {
+  height: 256px;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)),
+    url("https://images.unsplash.com/photo-1677344297888-81f04aa12a60?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 0%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.hero-copy {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  padding: 80px;
+  max-width: 1128px;
+  align-items: center;
+}
+
+.hero-copy h1 {
+  font-size: 2.5rem;
+}
+
+.hero-copy a {
+  font-size: 1.5rem;
+  text-decoration: none;
+  font-weight: 600;
+  color: white;
+}
+
+.hero-search {
+  height: 2.5rem;
+  width: 40%;
+  border-radius: 8px;
+  border: 2px solid white;
+  padding: 0 8px;
+  position: absolute;
+  bottom: -24px;
+}
+
+#search-results {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }

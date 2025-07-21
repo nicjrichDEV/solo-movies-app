@@ -1,5 +1,5 @@
 function searchField(element, cb) {
-  element.innerHTML = `<input placeholder="Search for a movie"/>`;
+  element.innerHTML = `<input class="search" placeholder="Search for a movie"/>`;
 
   element.addEventListener("change", handleInput);
 

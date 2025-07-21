@@ -4,11 +4,30 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <title>Movies - Search</title>
   </head>
   <body>
-    <a href="./myWatchList.html">Watch List</a>
-    <div id="app"></div>
+    <header class="hero-container">
+      <div class="hero-copy">
+        <h1>Find your film</h1>
+        <a href="./mywatchlist">My Watch List</a>
+      </div>
+      <input
+        class="hero-search"
+        id="search"
+        name="search"
+        placeholder="Search for a movie"
+      />
+    </header>
+    <main>
+      <div id="results"></div>
+    </main>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

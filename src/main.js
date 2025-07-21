@@ -1,28 +1,12 @@
 import "./styles/global.css";
-import { getTitleData } from "./services/OMDb";
+import { getTitleData, searchForTitle } from "./services/OMDb";
 import {
   addToWatchList,
   removeItemWatchList,
   checkUnique,
 } from "./services/watchList";
-import { searchResults } from "./components/searchResults";
-import { searchField } from "./components/searchField";
-
-document.querySelector("#app").innerHTML = `
-  <div id="hero"></div>
-  <div id="search-field"></div>
-  <div id="search-results"></div>
-`;
-
-const searchFieldEl = document.querySelector("#search-field");
-const searchResultsEl = document.querySelector("#search-results");
-
-function handleSearchField(query) {
-  // TODO: Handle failed or no entry data searches
-  const searchString = query.target.value;
-  if (searchString === "") alert("Enter at least three character");
-  searchResults(searchResultsEl, searchString);
-}
+const searchEl = document.querySelector("#search");
+const resultsEl = document.querySelector("#results");
 
 async function handleClick(item) {
   const id = item.target.dataset.id;
@@ -45,9 +29,44 @@ async function handleClick(item) {
   }
 }
 
-function init() {
-  searchField(searchFieldEl, handleSearchField);
-  searchResultsEl.addEventListener("click", handleClick);
+function renderResults(arrOfTitles) {
+  const markUp = arrOfTitles
+    .map((title) => {
+      console.log(title);
+      return `
+      <div class="result">
+        <img src="${title.Poster}" />
+        <div class="result-details">
+          <div class="result-details-row-1">
+          <h3>${title.Title}</h3>
+          <p>${title.Ratings[0].Value}</p>
+          </div>
+          <div class="results-details-row-2">
+            <p>${title.Runtime}</p>
+            <p>${title.Genre}</p>
+            <button data-id=${title.imdbID}>STUFF</button>
+          </div>
+          <p>${title.Plot}</p>
+        </div>
+      </div>
+    `;
+    })
+    .join("");
+
+  resultsEl.innerHTML = markUp;
 }
 
-init();
+async function handleSearch(event) {
+  const query = event.target.value;
+
+  const titleIDs = await searchForTitle(query);
+  const arrTitleDetails = await Promise.all(
+    titleIDs.map(async (item) => await getTitleData(item.imdbID))
+  );
+
+  renderResults(arrTitleDetails);
+}
+
+// Event Listeners
+searchEl.addEventListener("change", handleSearch);
+// searchResultsEl.addEventListener("click", handleClick);

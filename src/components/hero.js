@@ -1,3 +1,5 @@
+import "../styles/hero.css";
+
 function renderHero(element) {
   const currentRoute = window.location;
   console.log(currentRoute);

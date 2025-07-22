@@ -4,9 +4,9 @@ function addToWatchList(item) {
   localStorage.setItem("watchList", JSON.stringify(watchList));
 }
 
-function checkUnique(id) {
+function alreadyInWatchList(id) {
   const watchList = getWatchList();
-  return watchList.some((fav) => fav.imdbID === id) ? false : true;
+  return watchList.some((title) => title.imdbID === id);
 }
 
 function getWatchList() {
@@ -28,7 +28,7 @@ function clearWatchList() {
 export {
   addToWatchList,
   getWatchList,
-  checkUnique,
+  alreadyInWatchList,
   removeItemWatchList,
   clearWatchList,
 };

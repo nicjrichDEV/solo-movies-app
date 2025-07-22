@@ -3,36 +3,20 @@ import { getTitleData, searchForTitle } from "./services/OMDb";
 import {
   addToWatchList,
   removeItemWatchList,
-  checkUnique,
+  getWatchList,
+  alreadyInWatchList,
 } from "./services/watchList";
 const searchEl = document.querySelector("#search");
 const resultsEl = document.querySelector("#results");
-
-async function handleClick(item) {
-  const id = item.target.dataset.id;
-
-  if (!id) return;
-
-  const isUnique = checkUnique(id);
-
-  if (!isUnique) {
-    removeItemWatchList(id);
-    const element = document.querySelector(`[data-id=${id}]`);
-    element.innerText = "Add to Watch List";
-    return;
-  } else {
-    const details = await getTitleData(id);
-    addToWatchList(details);
-    const element = document.querySelector(`[data-id=${id}]`);
-    element.innerText = "Remove from Watch List";
-    return;
-  }
-}
+const BUTTON_TEXT = {
+  ADD: "Add to Watch List",
+  REMOVE: "Remove from Watch List",
+};
+let searchResults = [];
 
 function renderResults(arrOfTitles) {
   const markUp = arrOfTitles
     .map((title) => {
-      console.log(title);
       return `
       <div class="result">
         <img class="poster" src="${title.Poster}" />
@@ -57,6 +41,7 @@ function renderResults(arrOfTitles) {
 }
 
 async function handleSearch(event) {
+  searchResults = [];
   const query = event.target.value;
 
   const titleIDs = await searchForTitle(query);
@@ -65,8 +50,31 @@ async function handleSearch(event) {
   );
 
   renderResults(arrTitleDetails);
+  searchResults = [...arrTitleDetails];
+}
+
+function handleClick(event) {
+  // Capture button ID
+  const id = event.target.dataset.id;
+  if (!id) return;
+
+  // Capture button
+  const button = document.querySelector(`[data-id="${id}"]`);
+  if (!button) return;
+
+  // Already in Watch List - Remove it from watch list and change button text to add
+  if (alreadyInWatchList(id)) {
+    removeItemWatchList(id);
+    button.textContent = BUTTON_TEXT.ADD;
+    return;
+  }
+
+  // Not in Watch List - Get details and add to Watch List
+  const titleDetails = searchResults.find((title) => title.imdbID === id);
+  addToWatchList(titleDetails);
+  button.textContent = BUTTON_TEXT.REMOVE;
 }
 
 // Event Listeners
 searchEl.addEventListener("change", handleSearch);
-// searchResultsEl.addEventListener("click", handleClick);
+resultsEl.addEventListener("click", handleClick);

@@ -3,7 +3,6 @@ import { getTitleData, searchForTitle } from "./services/OMDb";
 import {
   addToWatchList,
   removeItemWatchList,
-  getWatchList,
   alreadyInWatchList,
 } from "./services/watchList";
 const searchEl = document.querySelector("#search");
@@ -28,7 +27,9 @@ function renderResults(arrOfTitles) {
           <div class="results-details-row-2">
             <p>${title.Runtime}</p>
             <p>${title.Genre}</p>
-            <button data-id=${title.imdbID}>Add to watch list</button>
+            <button data-id="${title.imdbID}" class="result__btn">
+            ${getButtonContents(alreadyInWatchList(title.imdbID))}
+            </button>
           </div>
           <p>${title.Plot}</p>
         </div>
@@ -53,26 +54,35 @@ async function handleSearch(event) {
   searchResults = [...arrTitleDetails];
 }
 
-function handleClick(event) {
-  // Capture button ID
-  const id = event.target.dataset.id;
-  if (!id) return;
+function getButtonContents(inWatchListStatus) {
+  return inWatchListStatus
+    ? `<img src="/icons/remove.svg" alt="remove from watch list" />Remove`
+    : `<img src="/icons/add.svg" alt="add to watch list" />Add`;
+}
 
-  // Capture button
-  const button = document.querySelector(`[data-id="${id}"]`);
+// Handle adding or removing from watch list
+function handleClick(event) {
+  // capture button
+  const button = event.target.closest(`button[data-id]`);
   if (!button) return;
 
-  // Already in Watch List - Remove it from watch list and change button text to add
-  if (alreadyInWatchList(id)) {
+  // capture button ID
+  const id = button.dataset.id;
+  if (!id) return;
+
+  const inWatchList = alreadyInWatchList(id);
+
+  // already in watch list - remove it from watch list and change button text to add
+  if (inWatchList) {
     removeItemWatchList(id);
-    button.textContent = BUTTON_TEXT.ADD;
+    button.innerHTML = getButtonContents(!inWatchList);
     return;
   }
 
-  // Not in Watch List - Get details and add to Watch List
+  // not in watch list - get details and add to Watch List
   const titleDetails = searchResults.find((title) => title.imdbID === id);
   addToWatchList(titleDetails);
-  button.textContent = BUTTON_TEXT.REMOVE;
+  button.innerHTML = getButtonContents(!inWatchList);
 }
 
 // Event Listeners

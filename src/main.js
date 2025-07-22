@@ -35,16 +35,16 @@ function renderResults(arrOfTitles) {
       console.log(title);
       return `
       <div class="result">
-        <img src="${title.Poster}" />
+        <img class="poster" src="${title.Poster}" />
         <div class="result-details">
           <div class="result-details-row-1">
           <h3>${title.Title}</h3>
-          <p>${title.Ratings[0].Value}</p>
+          <p>${title.Ratings[0].Value.slice(0, 3)}</p>
           </div>
           <div class="results-details-row-2">
             <p>${title.Runtime}</p>
             <p>${title.Genre}</p>
-            <button data-id=${title.imdbID}>STUFF</button>
+            <button data-id=${title.imdbID}>Add to watch list</button>
           </div>
           <p>${title.Plot}</p>
         </div>

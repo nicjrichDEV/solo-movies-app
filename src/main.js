@@ -15,9 +15,15 @@ function renderResults(arrOfTitles) {
     .map((title) => {
       if (!title) return;
 
+      resultsEl.classList.remove("results__placeholder__state");
       return `
       <div class="result">
-        <img class="poster" src="${title.Poster}" />
+        ${
+          title.Poster && title.Poster !== "N/A"
+            ? `<img class="result__poster" src="${title.Poster}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+               <div class="result__placeholder" style="display:none;"></div>`
+            : `<div class="result__placeholder"></div>`
+        }
         <div class="result-details">
           <div class="result-details-row-1">
           <h3>${title.Title}</h3>
@@ -48,6 +54,7 @@ async function performSearch(query) {
 
     if (!titleIDs || titleIDs.length === 0) {
       console.log("No search result found");
+      resultsEl.classList.add("results__placeholder__state");
       resultsEl.innerHTML = `<div>No Titles found. Try a different search</div>`;
       return;
     }
@@ -60,14 +67,15 @@ async function performSearch(query) {
     const validResults = arrTitleDetails.filter((result) => result);
 
     if (validResults === 0) {
+      resultsEl.classList.add("results__placeholder__state");
       resultsEl.innerHTML = `<div>Could not load title details</div>`;
       return;
     }
-    console.log(query);
     renderResults(arrTitleDetails);
     searchResults = [...arrTitleDetails];
   } catch (error) {
     console.error("Search failed", error);
+    resultsEl.classList.add("results__placeholder__state");
     resultsEl.innerHTML = `<div>Search failed. Please try again.</div>`;
   }
 }

@@ -7,22 +7,21 @@ import {
 } from "./services/watchList";
 const searchEl = document.querySelector("#search");
 const resultsEl = document.querySelector("#results");
-const BUTTON_TEXT = {
-  ADD: "Add to Watch List",
-  REMOVE: "Remove from Watch List",
-};
 let searchResults = [];
+let searchTimeout;
 
 function renderResults(arrOfTitles) {
   const markUp = arrOfTitles
     .map((title) => {
+      if (!title) return;
+
       return `
       <div class="result">
         <img class="poster" src="${title.Poster}" />
         <div class="result-details">
           <div class="result-details-row-1">
           <h3>${title.Title}</h3>
-          <p>${title.Ratings[0].Value.slice(0, 3)}</p>
+          <p>${title.Ratings?.[0]?.Value?.slice(0, 3) || "N/A"}</p>
           </div>
           <div class="results-details-row-2">
             <p>${title.Runtime}</p>
@@ -41,17 +40,49 @@ function renderResults(arrOfTitles) {
   resultsEl.innerHTML = markUp;
 }
 
+async function performSearch(query) {
+  try {
+    searchResults = [];
+
+    const titleIDs = await searchForTitle(query);
+
+    if (!titleIDs || titleIDs.length === 0) {
+      console.log("No search result found");
+      resultsEl.innerHTML = `<div>No Titles found. Try a different search</div>`;
+      return;
+    }
+
+    const arrTitleDetails = await Promise.all(
+      titleIDs.map(async (item) => await getTitleData(item.imdbID))
+    );
+
+    // filter out any failed api calls
+    const validResults = arrTitleDetails.filter((result) => result);
+
+    if (validResults === 0) {
+      resultsEl.innerHTML = `<div>Could not load title details</div>`;
+      return;
+    }
+    console.log(query);
+    renderResults(arrTitleDetails);
+    searchResults = [...arrTitleDetails];
+  } catch (error) {
+    console.error("Search failed", error);
+    resultsEl.innerHTML = `<div>Search failed. Please try again.</div>`;
+  }
+}
+
+function debounceSearch(query) {
+  clearTimeout(searchTimeout);
+
+  searchTimeout = setTimeout(() => {
+    if (query) performSearch(query);
+  }, 350);
+}
+
 async function handleSearch(event) {
-  searchResults = [];
   const query = event.target.value;
-
-  const titleIDs = await searchForTitle(query);
-  const arrTitleDetails = await Promise.all(
-    titleIDs.map(async (item) => await getTitleData(item.imdbID))
-  );
-
-  renderResults(arrTitleDetails);
-  searchResults = [...arrTitleDetails];
+  debounceSearch(query);
 }
 
 function getButtonContents(inWatchListStatus) {
@@ -85,6 +116,27 @@ function handleClick(event) {
   button.innerHTML = getButtonContents(!inWatchList);
 }
 
+function handleSearchButton(event) {
+  event.preventDefault();
+  const query = searchEl.value;
+
+  if (query) {
+    clearTimeout(searchTimeout);
+    performSearch(query);
+  }
+}
+
+function handleKeyPress(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    handleSearchButton(event);
+  }
+}
+
 // Event Listeners
-searchEl.addEventListener("change", handleSearch);
+searchEl.addEventListener("input", handleSearch);
+searchEl.addEventListener("keypress", handleKeyPress);
+document
+  .querySelector(".search-container button")
+  .addEventListener("click", handleSearchButton);
 resultsEl.addEventListener("click", handleClick);

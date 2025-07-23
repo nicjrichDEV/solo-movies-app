@@ -12,7 +12,25 @@
     <title>Movies - My Watch List</title>
   </head>
   <body>
-    <div id="app"></div>
+    <header class="hero-container">
+      <div class="hero-copy">
+        <h1>Find your film</h1>
+        <a href="./index.html">Search Titles</a>
+      </div>
+    </header>
+    <main>
+      <div id="results" class="results__placeholder__state">
+        <div class="result__explore">
+          <p class="result__explore__copy">
+            Your watch list is looking a little empty...
+          </p>
+          <a href="/">
+            <img src="/icons/add.svg" alt="Add a title to your watch list" />
+            Let's add some titles!</a
+          >
+        </div>
+      </div>
+    </main>
     <script type="module" src="./src/watchList.js"></script>
   </body>
 </html>
